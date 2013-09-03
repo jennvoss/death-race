@@ -1,0 +1,28 @@
+<!doctype html>
+  <head>
+    <title>Death Race</title>
+    <link rel="stylesheet"  type="text/css" href="styles.css">
+    <script src="js/death-race.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Death Race</h1>
+        <div id="caught">0</div>
+      </header>
+      <div id="content" class="content">
+      </div>
+      <footer>
+        <h2>Directions</h2>
+        <p>Hit gremlins for points</p>
+        <p>Avoid tombstones</p>
+      </footer>
+    </div>
+    <script>
+      var race = Object.create(Race);
+      race.init("content");
+      race.start();
+    </script>
+
+  </body>
+<html>
