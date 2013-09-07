@@ -18,7 +18,8 @@ var Race = (function () {
             speed: 100,
             caught: 0,
             directions: ['up', 'down', 'left', 'right'],
-            movePath: 0
+            movePath: 0,
+            sfx: new Audio('../death-race/audio/gremlin.mp3')
         },
         grave: {
             w: 15,
@@ -30,6 +31,7 @@ var Race = (function () {
             this.scope = document.getElementById(id);
             this.WIDTH = 600;
             this.HEIGHT = 400;
+            this.gutter = 40;
             this.occupiedCoordinates = []; // occupied coordinates
 
             this.scope.appendChild(items.car.element);
@@ -78,6 +80,25 @@ var Race = (function () {
             addEventListener('keyup', function (e) {
                 delete that.keysDown[e.keyCode];
             }, false);
+        },
+        initAudio: function(sound) {
+            var enableSound = document.getElementById('enableSound');
+            if (enableSound.checked) {
+                sound.play();
+            }
+        },
+        initTimer: function() {
+            var count = 60,
+                counter = setInterval(timer, 1000); // 1000 will run it every 1 second
+
+            function timer() {
+                count = count - 1;
+                document.getElementById('timer').innerHTML = count;
+                if (count === 0) {
+                    clearInterval(counter);
+                    return;
+                }
+            }
         },
         isCollision: function (a, b) {
             return !(
@@ -181,7 +202,7 @@ var Race = (function () {
                 car.spriteX = 80;
                 car.w = 32;
                 car.h = 24;
-                if (car.x > 0 && move.l) {
+                if (car.x > this.gutter && move.l) {
                    car.x -= car.speed * modifier;
                 }
             }
@@ -189,7 +210,7 @@ var Race = (function () {
                 car.spriteX = 120;
                 car.w = 32;
                 car.h = 24;
-                if (car.x < (this.WIDTH - car.w) && move.r) {
+                if (car.x < (this.WIDTH - this.gutter - car.w) && move.r) {
                     car.x += car.speed * modifier;
                 }
             }
@@ -199,6 +220,7 @@ var Race = (function () {
             // Are they touching?
             if (this.isCollision(monster, car)) {
                 ++monster.caught;
+                this.initAudio(monster.sfx);
                 monster.element.remove();
                 this.drawGrave(monster.x, monster.y);
 
@@ -227,6 +249,8 @@ var Race = (function () {
 
             this.keyEvents();
 
+            this.initAudio(items.monster.sfx);
+
             setInterval(function () {
                 var now = Date.now();
                 var delta = now - then;
@@ -235,7 +259,7 @@ var Race = (function () {
                 that.render();
 
                 then = now;
-            }, 10);
+            }, 1);
         }
     };
     return module;
